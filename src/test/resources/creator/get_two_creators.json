@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "fullName": "First Creator",
+    "modified": "2007-01-02T00:00:00-0500",
+    "comics": 2,
+    "series": 1,
+    "notes": "Some note"
+  },
+  {
+    "id": 5,
+    "fullName": "Second Creator",
+    "modified": "2008-03-04T00:00:00-0500",
+    "comics": 4,
+    "series": 2,
+    "notes": null
+  }
+]
