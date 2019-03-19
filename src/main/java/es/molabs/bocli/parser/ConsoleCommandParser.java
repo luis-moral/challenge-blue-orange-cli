@@ -33,8 +33,8 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         options = new Options();
         options.addOption(COMMAND_HELP, false, "Show available options");
         options.addOption(COMMAND_LIST, false, "Lists creators");
-        options.addOption(COMMAND_LIST_FILTER, true, "Field to filter");
-        options.addOption(COMMAND_LIST_SORT, true, "Field to sort");
+        options.addOption(Option.builder(COMMAND_LIST_FILTER).desc("Field to filter").valueSeparator('=').build());
+        options.addOption(COMMAND_LIST_SORT, false, "Field to sort");
 
         parser = new DefaultParser();
         helpFormatter = new HelpFormatter();
@@ -59,11 +59,10 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
 
         if (line.hasOption(COMMAND_HELP)) {
             command = new ShowHelpCommand(output, buildHelpMessage());
-        }
-        else if (line.hasOption(COMMAND_LIST)) {
-            command = new ListCreatorsCommand(output, webClient, host, line.getOptionValue(COMMAND_LIST_FILTER), "4", line.getOptionValue(COMMAND_LIST_SORT));
-        }
-        else {
+        } else if (line.hasOption(COMMAND_LIST)) {
+            String[] filter = line.getOptionValues(COMMAND_LIST_FILTER);
+            command = new ListCreatorsCommand(output, webClient, host, filter[0], filter[1], line.getOptionValue(COMMAND_LIST_SORT));
+        } else {
             command = new ErrorParsingCommand(output, "Invalid Command");
         }
 
