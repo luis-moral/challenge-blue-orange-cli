@@ -1,4 +1,7 @@
-package es.molabs.bocli.cli;
+package es.molabs.bocli.parser;
+
+import es.molabs.bocli.command.Command;
+import es.molabs.bocli.ouput.Output;
 
 public class SystemCommandParser implements CommandParser<String[]> {
 
@@ -9,7 +12,7 @@ public class SystemCommandParser implements CommandParser<String[]> {
     }
 
     @Override
-    public void execute(String[] args) {
+    public Command parse(String[] args) {
         throw new UnsupportedOperationException();
     }
 }

@@ -2,10 +2,10 @@ package es.molabs.bocli;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import es.molabs.bocli.cli.CommandParser;
-import es.molabs.bocli.cli.Output;
-import es.molabs.bocli.cli.SystemCommandParser;
-import es.molabs.bocli.cli.SystemOutput;
+import es.molabs.bocli.ouput.Output;
+import es.molabs.bocli.ouput.SystemOutput;
+import es.molabs.bocli.parser.CommandParser;
+import es.molabs.bocli.parser.SystemCommandParser;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BoCliFeature {
+public class CliFeature {
 
     @Spy
     private Output output = new SystemOutput();
@@ -40,7 +40,7 @@ public class BoCliFeature {
 
         String[] args = {"list", "-filter", "comics", "3", "-sort", "fullName"};
 
-        commandParser.execute(args);
+        commandParser.parse(args);
 
         Mockito
             .verify(output, Mockito.times(1))

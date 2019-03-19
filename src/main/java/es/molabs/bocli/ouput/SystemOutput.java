@@ -1,7 +1,8 @@
-package es.molabs.bocli.cli;
+package es.molabs.bocli.ouput;
 
-public class Output {
+public class SystemOutput implements Output {
 
+    @Override
     public void printLine(String line) {
         throw new UnsupportedOperationException();
     }
