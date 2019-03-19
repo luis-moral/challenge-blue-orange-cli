@@ -2,10 +2,10 @@ package es.molabs.bocli;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import es.molabs.bocli.ouput.ConsoleOutput;
 import es.molabs.bocli.ouput.Output;
-import es.molabs.bocli.ouput.SystemOutput;
 import es.molabs.bocli.parser.CommandParser;
-import es.molabs.bocli.parser.SystemCommandParser;
+import es.molabs.bocli.parser.ConsoleCommandParser;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 public class CliFeature {
 
     @Spy
-    private Output output = new SystemOutput();
+    private Output output = new ConsoleOutput();
 
     private WireMockServer apiMock;
     private CommandParser<String[]> commandParser;
@@ -31,7 +31,7 @@ public class CliFeature {
         apiMock = new WireMockServer(80);
         apiMock.start();
 
-        commandParser = new SystemCommandParser(output);
+        commandParser = new ConsoleCommandParser(output);
     }
 
     @Test public void 

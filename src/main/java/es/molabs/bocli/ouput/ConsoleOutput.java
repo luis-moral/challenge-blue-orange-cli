@@ -1,6 +1,6 @@
 package es.molabs.bocli.ouput;
 
-public class SystemOutput implements Output {
+public class ConsoleOutput implements Output {
 
     @Override
     public void printLine(String line) {

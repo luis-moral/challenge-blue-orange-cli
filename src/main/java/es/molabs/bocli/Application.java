@@ -1,11 +1,11 @@
 package es.molabs.bocli;
 
-import es.molabs.bocli.ouput.SystemOutput;
-import es.molabs.bocli.parser.SystemCommandParser;
+import es.molabs.bocli.ouput.ConsoleOutput;
+import es.molabs.bocli.parser.ConsoleCommandParser;
 
 public class Application {
 
     public static void main(String[] args) {
-        new SystemCommandParser(new SystemOutput()).parse(args);
+        new ConsoleCommandParser(new ConsoleOutput()).parse(args);
     }
 }

@@ -11,26 +11,26 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SystemCommandParserShould {
+public class ConsoleCommandParserShould {
 
     @Mock
     private Output output;
 
-    private SystemCommandParser commandParser;
+    private ConsoleCommandParser commandParser;
 
     @Before
     public void setUp() {
-        commandParser = new SystemCommandParser(output);
+        commandParser = new ConsoleCommandParser(output);
     }
 
     @Test public void
     parse_list_creator_commands() {
-        String[] args = {"list", "-filter", "comics", "3", "-sort", "fullName"};
+        String[] args = {"-list", "-filter", "comics=3", "-sort", "fullName"};
 
         Command command = commandParser.parse(args);
 
         ListCreatorsCommand listCreatorsCommand
-            = new ListCreatorsCommand(output, "comics", "fullName");
+            = new ListCreatorsCommand(output, "comics=3", "fullName");
 
         Assertions
             .assertThat(command)
