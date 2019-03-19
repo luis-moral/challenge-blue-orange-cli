@@ -1,5 +1,6 @@
 package es.molabs.bocli.parser;
 
+import es.molabs.bocli.client.WebClient;
 import es.molabs.bocli.command.Command;
 import es.molabs.bocli.command.ErrorParsingCommand;
 import es.molabs.bocli.command.ListCreatorsCommand;
@@ -18,14 +19,16 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
     private static final String COMMAND_LIST_FILTER = "filter";
     private static final String COMMAND_LIST_SORT = "sort";
 
+    private final WebClient webClient;
     private final Output output;
 
     private final Options options;
     private final CommandLineParser parser;
     private final HelpFormatter helpFormatter;
 
-    public ConsoleCommandParser(Output output) {
+    public ConsoleCommandParser(Output output, WebClient webClient) {
         this.output = output;
+        this.webClient = webClient;
 
         options = new Options();
         options.addOption(COMMAND_HELP, false, "Show available options");
@@ -52,12 +55,13 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
 
     private Command getCommand(CommandLine line) {
         Command command;
+        String host = "host";
 
         if (line.hasOption(COMMAND_HELP)) {
             command = new ShowHelpCommand(output, buildHelpMessage());
         }
         else if (line.hasOption(COMMAND_LIST)) {
-            command = new ListCreatorsCommand(output, line.getOptionValue(COMMAND_LIST_FILTER), line.getOptionValue(COMMAND_LIST_SORT));
+            command = new ListCreatorsCommand(output, webClient, host, line.getOptionValue(COMMAND_LIST_FILTER), "4", line.getOptionValue(COMMAND_LIST_SORT));
         }
         else {
             command = new ErrorParsingCommand(output, "Invalid Command");

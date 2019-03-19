@@ -2,11 +2,13 @@ package es.molabs.bocli;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import es.molabs.bocli.client.WebClient;
 import es.molabs.bocli.ouput.ConsoleOutput;
 import es.molabs.bocli.ouput.Output;
 import es.molabs.bocli.parser.CommandParser;
 import es.molabs.bocli.parser.ConsoleCommandParser;
-import org.apache.commons.io.IOUtils;
+import es.molabs.bocli.util.TestUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +17,6 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CliFeature {
@@ -31,7 +32,14 @@ public class CliFeature {
         apiMock = new WireMockServer(80);
         apiMock.start();
 
-        commandParser = new ConsoleCommandParser(output);
+        commandParser = new ConsoleCommandParser(output, new WebClient());
+    }
+
+    @After
+    public void tearDown() {
+        if (apiMock.isRunning()) {
+            apiMock.stop();
+        }
     }
 
     @Test public void 
@@ -44,7 +52,7 @@ public class CliFeature {
 
         Mockito
             .verify(output, Mockito.times(1))
-            .printLine(readFile("/creator/get_two_creators.json"));
+            .printLine(TestUtils.readFile("/creator/get_two_creators.json"));
     }
 
     private void stubApi() throws IOException {
@@ -57,12 +65,8 @@ public class CliFeature {
                             .aResponse()
                             .withStatus(200)
                             .withHeader("Content-Type", "application/json")
-                            .withBody(readFile("/creator/get_two_creators.json"))
+                            .withBody(TestUtils.readFile("/creator/get_two_creators.json"))
                     )
             );
-    }
-
-    private String readFile(String resource) throws IOException {
-        return IOUtils.toString(getClass().getResourceAsStream(resource), StandardCharsets.UTF_8);
     }
 }
