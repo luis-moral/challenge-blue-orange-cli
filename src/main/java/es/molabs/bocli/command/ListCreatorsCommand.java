@@ -35,7 +35,8 @@ public class ListCreatorsCommand implements Command {
 
         try {
             message = webClient.get(host + PATH_CREATORS, buildQueryString());
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             message = e.getMessage();
         }
 

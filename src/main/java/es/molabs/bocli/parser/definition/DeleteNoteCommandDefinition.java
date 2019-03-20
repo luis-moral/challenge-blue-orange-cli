@@ -27,7 +27,7 @@ public class DeleteNoteCommandDefinition extends ConsoleCommandDefinition<Delete
                 output,
                 webClient,
                 host,
-                line.getOptionValue(ARGUMENT_CREATOR_ID)
+                Integer.parseInt(line.getOptionValue(ARGUMENT_CREATOR_ID))
             );
     }
 }

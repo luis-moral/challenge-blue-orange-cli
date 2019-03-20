@@ -1,18 +1,23 @@
 package es.molabs.bocli.command;
 
+import com.eclipsesource.json.Json;
 import es.molabs.bocli.client.WebClient;
 import es.molabs.bocli.ouput.Output;
 
+import java.io.IOException;
 import java.util.Objects;
 
-public class CreateNoteCommand implements Command{
+public class CreateNoteCommand implements Command {
+
+    private static final String PATH_CREATOR_NOTE = "/api/creator/note";
+
     private final Output output;
     private final WebClient webClient;
     private final String host;
-    private final String creatorId;
+    private final int creatorId;
     private final String note;
 
-    public CreateNoteCommand(Output output, WebClient webClient, String host, String creatorId, String note) {
+    public CreateNoteCommand(Output output, WebClient webClient, String host, int creatorId, String note) {
         this.output = output;
         this.webClient = webClient;
         this.host = host;
@@ -22,7 +27,25 @@ public class CreateNoteCommand implements Command{
 
     @Override
     public void execute() {
-        throw new UnsupportedOperationException();
+        String message;
+
+        try {
+            message =
+                webClient
+                    .post(
+                        host + PATH_CREATOR_NOTE,
+                        Json
+                            .object()
+                            .add("creatorId", creatorId)
+                            .add("note", note)
+                            .toString()
+                    );
+        }
+        catch (IOException IOe) {
+            message = IOe.getMessage();
+        }
+
+        output.printLine(message);
     }
 
     @Override

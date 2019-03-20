@@ -62,7 +62,7 @@ public class ConsoleCommandParserShould {
 
         Assertions
             .assertThat(createNoteCommand)
-            .isEqualTo(new CreateNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, "5", "Some text"));
+            .isEqualTo(new CreateNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, 5, "Some text"));
     }
     
     @Test public void
@@ -73,7 +73,7 @@ public class ConsoleCommandParserShould {
 
         Assertions
             .assertThat(createNoteCommand)
-            .isEqualTo(new EditNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, "10", "Some text"));
+            .isEqualTo(new EditNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, 10, "Some text"));
     }
     
     @Test public void 
@@ -84,6 +84,6 @@ public class ConsoleCommandParserShould {
 
         Assertions
             .assertThat(createNoteCommand)
-            .isEqualTo(new DeleteNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, "15"));
+            .isEqualTo(new DeleteNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, 15));
     }
 }

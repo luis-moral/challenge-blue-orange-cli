@@ -9,10 +9,10 @@ public class EditNoteCommand implements Command{
     private final Output output;
     private final WebClient webClient;
     private final String host;
-    private final String creatorId;
+    private final int creatorId;
     private final String note;
 
-    public EditNoteCommand(Output output, WebClient webClient, String host, String creatorId, String note) {
+    public EditNoteCommand(Output output, WebClient webClient, String host, int creatorId, String note) {
         this.output = output;
         this.webClient = webClient;
         this.host = host;

@@ -29,7 +29,7 @@ public class EditNoteCommandDefinition extends ConsoleCommandDefinition<EditNote
                 output,
                 webClient,
                 host,
-                line.getOptionValue(ARGUMENT_CREATOR_ID),
+                Integer.parseInt(line.getOptionValue(ARGUMENT_CREATOR_ID)),
                 line.getOptionValue(ARGUMENT_NOTE));
     }
 }

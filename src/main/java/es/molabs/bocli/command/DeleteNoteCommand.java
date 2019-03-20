@@ -9,9 +9,9 @@ public class DeleteNoteCommand implements Command{
     private final Output output;
     private final WebClient webClient;
     private final String host;
-    private final String id;
+    private final int id;
 
-    public DeleteNoteCommand(Output output, WebClient webClient, String host, String id) {
+    public DeleteNoteCommand(Output output, WebClient webClient, String host, int id) {
         this.output = output;
         this.webClient = webClient;
         this.host = host;

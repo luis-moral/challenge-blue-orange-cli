@@ -29,7 +29,7 @@ public class CreateNoteCommandDefinition extends ConsoleCommandDefinition<Create
                 output,
                 webClient,
                 host,
-                line.getOptionValue(ARGUMENT_CREATOR_ID),
+                Integer.parseInt(line.getOptionValue(ARGUMENT_CREATOR_ID)),
                 line.getOptionValue(ARGUMENT_NOTE));
     }
 }
