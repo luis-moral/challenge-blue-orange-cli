@@ -10,6 +10,7 @@ import org.apache.commons.cli.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
 
 public class ConsoleCommandParser implements CommandParser<String[]> {
 
@@ -24,7 +25,6 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
     private final WebClient webClient;
     private final Output output;
 
-    private final Options options;
     private final CommandLineParser parser;
     private final HelpFormatter helpFormatter;
 
@@ -32,14 +32,34 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         this.output = output;
         this.webClient = webClient;
 
-        options = new Options();
-        options.addOption(COMMAND_HELP, false, "Show available options");
-        options.addOption(COMMAND_LIST, false, "Lists creators");
+        parser = new DefaultParser();
+        helpFormatter = new HelpFormatter();
+    }
+
+    private Options actions() {
+        Options actions = new Options();
+        actions.addOption(actionOption(COMMAND_HELP, "Show available options"));
+        actions.addOption(actionOption(COMMAND_LIST, "Lists creators"));
+
+        return actions;
+    }
+
+    private Options listCommandOptions() {
+        Options options = new Options();
         options.addOption(Option.builder(COMMAND_LIST_FILTER).desc("Field to filter").numberOfArgs(2).valueSeparator('=').build());
         options.addOption(COMMAND_LIST_SORT, true, "Field to sort");
 
-        parser = new DefaultParser();
-        helpFormatter = new HelpFormatter();
+        return options;
+    }
+
+    private Option actionOption(String argument, String description) {
+        return
+            Option
+                .builder(argument)
+                .hasArg(false)
+                .required(false)
+                .desc(description)
+                .build();
     }
 
     @Override
@@ -47,7 +67,23 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         Command command;
 
         try {
-            command = getCommand(parser.parse(options, args));
+            CommandLine actionLine = parser.parse(actions(), args, true);
+
+            if (actionLine.hasOption(COMMAND_HELP)) {
+                command = new ShowHelpCommand(output, buildHelpMessage());
+            }
+            else if (actionLine.hasOption(COMMAND_LIST)) {
+                command =
+                    parseListCommand(
+                        Arrays
+                            .stream(args)
+                            .filter(value -> !value.equals("-" + COMMAND_LIST))
+                            .toArray(length -> new String[length])
+                    );
+            }
+            else {
+                command = new ErrorParsingCommand(output, "Invalid Command");
+            }
         } catch (ParseException Pe) {
             command = new ErrorParsingCommand(output, Pe.getMessage());
         }
@@ -55,26 +91,18 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         return command;
     }
 
-    private Command getCommand(CommandLine line) {
-        Command command;
+    private Command parseListCommand(String[] args) throws ParseException {
+        CommandLine line = parser.parse(listCommandOptions(), args);
+        String[] filter = line.getOptionValues(COMMAND_LIST_FILTER);
 
-        if (line.hasOption(COMMAND_HELP)) {
-            command = new ShowHelpCommand(output, buildHelpMessage());
-        } else if (line.hasOption(COMMAND_LIST)) {
-            String[] filter = line.getOptionValues(COMMAND_LIST_FILTER);
-            command = new ListCreatorsCommand(output, webClient, DEFAULT_HOST, filter[0], filter[1], line.getOptionValue(COMMAND_LIST_SORT));
-        } else {
-            command = new ErrorParsingCommand(output, "Invalid Command");
-        }
-
-        return command;
+        return new ListCreatorsCommand(output, webClient, DEFAULT_HOST, filter[0], filter[1], line.getOptionValue(COMMAND_LIST_SORT));
     }
 
     private String buildHelpMessage() {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
 
-        helpFormatter.printHelp(printWriter, 74, "bo-cli", "", options, 1, 3, "");
+        helpFormatter.printHelp(printWriter, 74, "bo-cli", "", actions(), 1, 3, "");
 
         return stringWriter.toString();
     }
