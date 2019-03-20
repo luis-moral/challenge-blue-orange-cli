@@ -62,10 +62,10 @@ public class ListCreatorsCommand implements Command {
         if (o == null || getClass() != o.getClass()) return false;
         ListCreatorsCommand that = (ListCreatorsCommand) o;
         return Objects.equals(output, that.output) &&
-                Objects.equals(webClient, that.webClient) &&
-                Objects.equals(filterField, that.filterField) &&
-                Objects.equals(filterValue, that.filterValue) &&
-                Objects.equals(sortValue, that.sortValue);
+            Objects.equals(webClient, that.webClient) &&
+            Objects.equals(filterField, that.filterField) &&
+            Objects.equals(filterValue, that.filterValue) &&
+            Objects.equals(sortValue, that.sortValue);
     }
 
     @Override

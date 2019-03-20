@@ -25,6 +25,10 @@ public class ConsoleCommandParserShould {
     public void setUp() {
         commandParser = new ConsoleCommandParser(output, webClient);
     }
+    
+    @Test public void 
+    use_localhost_if_remote_not_specified() {
+    }
 
     @Test public void
     parse_list_creator_commands() {
@@ -33,7 +37,7 @@ public class ConsoleCommandParserShould {
         Command command = commandParser.parse(args);
 
         ListCreatorsCommand listCreatorsCommand
-            = new ListCreatorsCommand(output, webClient, "host", "comics", "3", "fullName");
+            = new ListCreatorsCommand(output, webClient, "http://localhost:8080", "comics", "3", "fullName");
 
         Assertions
             .assertThat(command)
