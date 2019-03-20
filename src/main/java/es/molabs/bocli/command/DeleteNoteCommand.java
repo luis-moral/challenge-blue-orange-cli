@@ -5,7 +5,8 @@ import es.molabs.bocli.ouput.Output;
 
 import java.util.Objects;
 
-public class DeleteNoteCommand implements Command{
+public class DeleteNoteCommand implements Command {
+
     private final Output output;
     private final WebClient webClient;
     private final String host;
