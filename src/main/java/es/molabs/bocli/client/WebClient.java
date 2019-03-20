@@ -21,13 +21,16 @@ public class WebClient {
         return body;
     }
 
-    public void post(String url, String requestBody) throws IOException {
+    public String post(String url, String requestBody) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
         sendRequestBody(connection, "POST", requestBody);
+        String body = readResponseBody(connection);
 
         validateReponseCode(connection);
         connection.disconnect();
+
+        return body;
     }
 
     public void put(String url, String id, String requestBody) throws IOException {

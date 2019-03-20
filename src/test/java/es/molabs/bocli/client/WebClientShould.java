@@ -59,18 +59,26 @@ public class WebClientShould {
         queryString.put("id", "3");
         queryString.put("fullName", "Some Creator");
 
-        String body = webClient.get("http://localhost:8080/api/creators", queryString);
+        String responseBody = webClient.get("http://localhost:8080/api/creators", queryString);
 
         Assertions
-            .assertThat(body)
+            .assertThat(responseBody)
             .isEqualToNormalizingNewlines(expectedBody);
     }
 
     @Test public void
-    process_post_requests() throws IOException {
+    read_response_body_post_requests() throws IOException {
         String requestBody =
             Json
                 .object()
+                .add("creatorId", 3)
+                .add("note", "Test note")
+                .toString();
+
+        String expectedResponseBody =
+            Json
+                .object()
+                .add("id", 1)
                 .add("creatorId", 3)
                 .add("note", "Test note")
                 .toString();
@@ -85,10 +93,15 @@ public class WebClientShould {
                             .aResponse()
                             .withStatus(200)
                             .withHeader("Content-Type", "application/json")
+                            .withBody(expectedResponseBody)
                     )
             );
 
-        webClient.post("http://localhost:8080/api/creator/note", requestBody);
+        String responseBody = webClient.post("http://localhost:8080/api/creator/note", requestBody);
+
+        Assertions
+            .assertThat(responseBody)
+            .isEqualTo(expectedResponseBody);
 
         apiMock
             .verify(
