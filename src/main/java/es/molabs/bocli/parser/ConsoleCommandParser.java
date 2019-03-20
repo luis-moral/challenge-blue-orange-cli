@@ -6,6 +6,7 @@ import es.molabs.bocli.command.ErrorParsingCommand;
 import es.molabs.bocli.command.ListCreatorsCommand;
 import es.molabs.bocli.command.ShowHelpCommand;
 import es.molabs.bocli.ouput.Output;
+import es.molabs.bocli.parser.definition.CreateNoteCommandDefinition;
 import org.apache.commons.cli.*;
 
 import java.io.PrintWriter;
@@ -14,11 +15,12 @@ import java.util.Arrays;
 
 public class ConsoleCommandParser implements CommandParser<String[]> {
 
-    private static final String DEFAULT_HOST = "http://localhost:8080";
+    public static final String DEFAULT_HOST = "http://localhost:8080";
 
     private static final String COMMAND_HELP = "help";
-
     private static final String COMMAND_LIST = "list";
+    private static final String COMMAND_CREATE_NOTE = "add";
+
     private static final String COMMAND_LIST_FILTER = "filter";
     private static final String COMMAND_LIST_SORT = "sort";
 
@@ -36,10 +38,11 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         helpFormatter = new HelpFormatter();
     }
 
-    private Options actions() {
+    private Options commandOptions() {
         Options actions = new Options();
         actions.addOption(actionOption(COMMAND_HELP, "Show available options"));
         actions.addOption(actionOption(COMMAND_LIST, "Lists creators"));
+        actions.addOption(actionOption(COMMAND_CREATE_NOTE, "Adds a custom note to a creator"));
 
         return actions;
     }
@@ -67,7 +70,7 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         Command command;
 
         try {
-            CommandLine actionLine = parser.parse(actions(), args, true);
+            CommandLine actionLine = parser.parse(commandOptions(), args, true);
 
             if (actionLine.hasOption(COMMAND_HELP)) {
                 command = new ShowHelpCommand(output, buildHelpMessage());
@@ -81,6 +84,11 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
                             .toArray(length -> new String[length])
                     );
             }
+            else if (actionLine.hasOption(COMMAND_CREATE_NOTE)) {
+                command =
+                    new CreateNoteCommandDefinition()
+                        .parse(output, webClient, DEFAULT_HOST, parser, removeArgument(args, COMMAND_CREATE_NOTE));
+            }
             else {
                 command = new ErrorParsingCommand(output, "Invalid Command");
             }
@@ -89,6 +97,14 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         }
 
         return command;
+    }
+
+    private String[] removeArgument(String args[], String argument) {
+        return
+            Arrays
+                .stream(args)
+                .filter(value -> !value.equals("-" + argument))
+                .toArray(length -> new String[length]);
     }
 
     private Command parseListCommand(String[] args) throws ParseException {
@@ -109,7 +125,7 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
 
-        helpFormatter.printHelp(printWriter, 74, "bo-cli", "", actions(), 1, 3, "");
+        helpFormatter.printHelp(printWriter, 74, "bo-cli", "", commandOptions(), 1, 3, "");
 
         return stringWriter.toString();
     }

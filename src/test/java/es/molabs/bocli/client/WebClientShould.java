@@ -72,7 +72,7 @@ public class WebClientShould {
             Json
                 .object()
                 .add("creatorId", 3)
-                .add("text", "Test note")
+                .add("note", "Test note")
                 .toString();
 
         apiMock
@@ -106,7 +106,7 @@ public class WebClientShould {
             Json
                 .object()
                 .add("creatorId", 3)
-                .add("text", "Test note")
+                .add("note", "Test note")
                 .toString();
 
         apiMock

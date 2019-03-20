@@ -2,6 +2,7 @@ package es.molabs.bocli.parser;
 
 import es.molabs.bocli.client.WebClient;
 import es.molabs.bocli.command.Command;
+import es.molabs.bocli.command.CreateNoteCommand;
 import es.molabs.bocli.command.ListCreatorsCommand;
 import es.molabs.bocli.ouput.Output;
 import org.assertj.core.api.Assertions;
@@ -44,18 +45,29 @@ public class ConsoleCommandParserShould {
 
         Assertions
             .assertThat(noArgumentsCommand)
-            .isEqualTo(new ListCreatorsCommand(output, webClient, "http://localhost:8080", null, null, null));
+            .isEqualTo(new ListCreatorsCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, null, null, null));
 
         Assertions
             .assertThat(onlyFilterCommand)
-            .isEqualTo(new ListCreatorsCommand(output, webClient, "http://localhost:8080", "comics", "3", null));
+            .isEqualTo(new ListCreatorsCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, "comics", "3", null));
 
         Assertions
             .assertThat(onlySortingCommand)
-            .isEqualTo(new ListCreatorsCommand(output, webClient, "http://localhost:8080", null, null, "fullName"));
+            .isEqualTo(new ListCreatorsCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, null, null, "fullName"));
 
         Assertions
             .assertThat(allArgumentsCommand)
-            .isEqualTo(new ListCreatorsCommand(output, webClient, "http://localhost:8080", "comics", "3", "fullName"));
+            .isEqualTo(new ListCreatorsCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, "comics", "3", "fullName"));
+    }
+
+    @Test public void
+    parse_create_note_commands() {
+        String[] args = {"-add", "-creatorId", "5", "-note", "Some text"};
+
+        Command createNoteCommand = commandParser.parse(args);
+
+        Assertions
+            .assertThat(createNoteCommand)
+            .isEqualTo(new CreateNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, "5", "Some text"));
     }
 }
