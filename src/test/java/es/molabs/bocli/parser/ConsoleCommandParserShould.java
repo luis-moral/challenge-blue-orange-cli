@@ -24,6 +24,23 @@ public class ConsoleCommandParserShould {
     public void setUp() {
         commandParser = new ConsoleCommandParser(output, webClient);
     }
+    
+    @Test public void 
+    accept_api_server_host_by_url() {
+        String[] withServer = {"-list", "-server", "http://test.com"};
+        String[] withoutServer = {"-list"};
+
+        ListCreatorsCommand commandWithServer = (ListCreatorsCommand) commandParser.parse(withServer);
+        ListCreatorsCommand commandWithoutServer = (ListCreatorsCommand) commandParser.parse(withoutServer);
+
+        Assertions
+            .assertThat(commandWithServer.getHost())
+            .isEqualTo("http://test.com");
+
+        Assertions
+            .assertThat(commandWithoutServer.getHost())
+            .isEqualTo(ConsoleCommandParser.DEFAULT_HOST);
+    }
 
     @Test public void
     parse_list_creator_commands() {

@@ -14,6 +14,7 @@ import org.apache.commons.cli.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Optional;
 
 public class ConsoleCommandParser implements CommandParser<String[]> {
 
@@ -24,6 +25,8 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
     private static final String COMMAND_CREATE_NOTE = "add_note";
     private static final String COMMAND_EDIT_NOTE = "edit_note";
     private static final String COMMAND_DELETE_NOTE = "delete_note";
+
+    private static final String ARGUMENT_SERVER = "server";
 
     private final WebClient webClient;
     private final Output output;
@@ -46,6 +49,7 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         actions.addOption(actionOption(COMMAND_CREATE_NOTE, "Adds a custom note to a creator"));
         actions.addOption(actionOption(COMMAND_EDIT_NOTE, "Edits a creator's custom note"));
         actions.addOption(actionOption(COMMAND_DELETE_NOTE, "Deletes a creator's custom note"));
+        actions.addOption(Option.builder(ARGUMENT_SERVER).argName("url").hasArg().desc("Specifies the api server base url").build());
 
         return actions;
     }
@@ -65,30 +69,30 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         Command command;
 
         try {
-            CommandLine actionLine = parser.parse(commandOptions(), args, true);
+            CommandLine line = parser.parse(commandOptions(), args, true);
 
-            if (actionLine.hasOption(COMMAND_HELP)) {
+            if (line.hasOption(COMMAND_HELP)) {
                 command = new ShowHelpCommand(output, buildHelpMessage());
             }
-            else if (actionLine.hasOption(COMMAND_LIST)) {
+            else if (line.hasOption(COMMAND_LIST)) {
                 command =
                     new ListCreatorsCommandDefinition()
-                        .parse(output, webClient, DEFAULT_HOST, parser, removeArgument(args, COMMAND_LIST));
+                        .parse(output, webClient, getHost(line), parser, removeCommandAndRemote(args, COMMAND_LIST));
             }
-            else if (actionLine.hasOption(COMMAND_CREATE_NOTE)) {
+            else if (line.hasOption(COMMAND_CREATE_NOTE)) {
                 command =
                     new CreateNoteCommandDefinition()
-                        .parse(output, webClient, DEFAULT_HOST, parser, removeArgument(args, COMMAND_CREATE_NOTE));
+                        .parse(output, webClient, getHost(line), parser, removeCommandAndRemote(args, COMMAND_CREATE_NOTE));
             }
-            else if (actionLine.hasOption(COMMAND_EDIT_NOTE)) {
+            else if (line.hasOption(COMMAND_EDIT_NOTE)) {
                 command =
                     new EditNoteCommandDefinition()
-                        .parse(output, webClient, DEFAULT_HOST, parser, removeArgument(args, COMMAND_EDIT_NOTE));
+                        .parse(output, webClient, getHost(line), parser, removeCommandAndRemote(args, COMMAND_EDIT_NOTE));
             }
-            else if (actionLine.hasOption(COMMAND_DELETE_NOTE)) {
+            else if (line.hasOption(COMMAND_DELETE_NOTE)) {
                 command =
                     new DeleteNoteCommandDefinition()
-                        .parse(output, webClient, DEFAULT_HOST, parser, removeArgument(args, COMMAND_DELETE_NOTE));
+                        .parse(output, webClient, getHost(line), parser, removeCommandAndRemote(args, COMMAND_DELETE_NOTE));
             }
             else {
                 command = new ErrorParsingCommand(output, "Invalid Command");
@@ -100,11 +104,15 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         return command;
     }
 
-    private String[] removeArgument(String args[], String argument) {
+    private String getHost(CommandLine line) {
+        return Optional.ofNullable(line.getOptionValue(ARGUMENT_SERVER)).orElse(DEFAULT_HOST);
+    }
+
+    private String[] removeCommandAndRemote(String args[], String command) {
         return
             Arrays
                 .stream(args)
-                .filter(value -> !value.equals("-" + argument))
+                .filter(value -> !value.equals("-" + command) && !value.equals("-" + ARGUMENT_SERVER))
                 .toArray(length -> new String[length]);
     }
 
