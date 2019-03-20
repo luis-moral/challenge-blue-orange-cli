@@ -12,18 +12,37 @@ import java.util.Arrays;
 
 public abstract class ConsoleCommandDefinition<T extends Command> {
 
+    private final String option;
+    private final String argumentName;
+    private final String description;
     private final Options commandOptions;
 
-    public ConsoleCommandDefinition(Option...options) {
+    public ConsoleCommandDefinition(String option, String argumentName, String description, Option...options) {
+        this.option = option;
+        this.argumentName = argumentName;
+        this.description = description;
+
         commandOptions = new Options();
 
         Arrays
             .stream(options)
-            .forEach(option -> commandOptions.addOption(option));
+            .forEach(value -> commandOptions.addOption(value));
     }
 
     public Options options() {
         return commandOptions;
+    }
+
+    public String option() {
+        return option;
+    }
+
+    public String argumentName() {
+        return argumentName;
+    }
+
+    public String description() {
+        return description;
     }
 
     public abstract T parse(Output output, WebClient webClient, String host, CommandLineParser parser, String[] args) throws ParseException;

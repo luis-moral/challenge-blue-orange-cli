@@ -15,6 +15,9 @@ public class ListCreatorsCommandDefinition extends ConsoleCommandDefinition<List
 
     public ListCreatorsCommandDefinition() {
         super(
+            "list",
+            "",
+            "Lists creators",
             Option.builder(ARGUMENT_FILTER).desc("Field to filter").numberOfArgs(2).valueSeparator('=').build(),
             Option.builder(ARGUMENT_SORT).hasArg().desc("Field to sort").build()
         );
@@ -32,6 +35,7 @@ public class ListCreatorsCommandDefinition extends ConsoleCommandDefinition<List
                 host,
                 filter != null ? filter[0] : null,
                 filter != null ? filter[1] : null,
-                line.getOptionValue(ARGUMENT_SORT));
+                line.getOptionValue(ARGUMENT_SORT)
+            );
     }
 }

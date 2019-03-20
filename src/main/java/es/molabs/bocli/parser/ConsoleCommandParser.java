@@ -5,15 +5,14 @@ import es.molabs.bocli.command.Command;
 import es.molabs.bocli.command.ErrorParsingCommand;
 import es.molabs.bocli.command.ShowHelpCommand;
 import es.molabs.bocli.ouput.Output;
-import es.molabs.bocli.parser.definition.CreateNoteCommandDefinition;
-import es.molabs.bocli.parser.definition.DeleteNoteCommandDefinition;
-import es.molabs.bocli.parser.definition.EditNoteCommandDefinition;
-import es.molabs.bocli.parser.definition.ListCreatorsCommandDefinition;
+import es.molabs.bocli.parser.definition.*;
 import org.apache.commons.cli.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class ConsoleCommandParser implements CommandParser<String[]> {
@@ -21,12 +20,22 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
     public static final String DEFAULT_HOST = "http://localhost:8080";
 
     private static final String COMMAND_HELP = "help";
-    private static final String COMMAND_LIST = "list";
-    private static final String COMMAND_CREATE_NOTE = "add_note";
-    private static final String COMMAND_EDIT_NOTE = "edit_note";
-    private static final String COMMAND_DELETE_NOTE = "delete_note";
-
     private static final String ARGUMENT_SERVER = "server";
+
+    private static final Map<String, ConsoleCommandDefinition> definitionMap;
+
+    static {
+        ListCreatorsCommandDefinition listCreatorsCommandDefinition = new ListCreatorsCommandDefinition();
+        CreateNoteCommandDefinition createNoteCommandDefinition = new CreateNoteCommandDefinition();
+        EditNoteCommandDefinition editNoteCommandDefinition = new EditNoteCommandDefinition();
+        DeleteNoteCommandDefinition deleteNoteCommandDefinition = new DeleteNoteCommandDefinition();
+
+        definitionMap = new HashMap<>();
+        definitionMap.put(listCreatorsCommandDefinition.option(), listCreatorsCommandDefinition);
+        definitionMap.put(createNoteCommandDefinition.option(), createNoteCommandDefinition);
+        definitionMap.put(editNoteCommandDefinition.option(), editNoteCommandDefinition);
+        definitionMap.put(deleteNoteCommandDefinition.option(), deleteNoteCommandDefinition);
+    }
 
     private final WebClient webClient;
     private final Output output;
@@ -43,25 +52,30 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
     }
 
     private Options commandOptions() {
-        Options actions = new Options();
-        actions.addOption(actionOption(COMMAND_HELP, "Show available options"));
-        actions.addOption(actionOption(COMMAND_LIST, "Lists creators"));
-        actions.addOption(actionOption(COMMAND_CREATE_NOTE, "Adds a custom note to a creator"));
-        actions.addOption(actionOption(COMMAND_EDIT_NOTE, "Edits a creator's custom note"));
-        actions.addOption(actionOption(COMMAND_DELETE_NOTE, "Deletes a creator's custom note"));
-        actions.addOption(Option.builder(ARGUMENT_SERVER).argName("url").hasArg().desc("Specifies the api server base url").build());
+        Options options = new Options();
 
-        return actions;
-    }
+        options.addOption(Option.builder(COMMAND_HELP).desc("Show available options").build());
+        options.addOption(Option.builder(ARGUMENT_SERVER).argName("url").hasArg().desc("Specifies the api server base url").build());
 
-    private Option actionOption(String argument, String description) {
-        return
-            Option
-                .builder(argument)
-                .hasArg(false)
-                .required(false)
-                .desc(description)
-                .build();
+        definitionMap
+            .values()
+            .stream()
+            .forEach(
+                definition ->
+                    options
+                        .addOption(
+                            Option
+                                .builder(definition.option())
+                                .hasArg(true)
+                                .optionalArg(true)
+                                .argName(definition.argumentName())
+                                .required(false)
+                                .desc(definition.description())
+                                .build()
+                        )
+            );
+
+        return options;
     }
 
     @Override
@@ -74,34 +88,32 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
             if (line.hasOption(COMMAND_HELP)) {
                 command = new ShowHelpCommand(output, buildHelpMessage());
             }
-            else if (line.hasOption(COMMAND_LIST)) {
-                command =
-                    new ListCreatorsCommandDefinition()
-                        .parse(output, webClient, getHost(line), parser, removeCommandAndRemote(args, COMMAND_LIST));
-            }
-            else if (line.hasOption(COMMAND_CREATE_NOTE)) {
-                command =
-                    new CreateNoteCommandDefinition()
-                        .parse(output, webClient, getHost(line), parser, removeCommandAndRemote(args, COMMAND_CREATE_NOTE));
-            }
-            else if (line.hasOption(COMMAND_EDIT_NOTE)) {
-                command =
-                    new EditNoteCommandDefinition()
-                        .parse(output, webClient, getHost(line), parser, removeCommandAndRemote(args, COMMAND_EDIT_NOTE));
-            }
-            else if (line.hasOption(COMMAND_DELETE_NOTE)) {
-                command =
-                    new DeleteNoteCommandDefinition()
-                        .parse(output, webClient, getHost(line), parser, removeCommandAndRemote(args, COMMAND_DELETE_NOTE));
-            }
             else {
-                command = new ErrorParsingCommand(output, "Invalid Command");
+                command =
+                    definitionMap
+                        .keySet()
+                        .stream()
+                        .filter(key -> line.hasOption(key))
+                        .map(option -> definitionMap.get(option))
+                        .map(definition -> parseDefinition(definition, line, args))
+                        .findFirst()
+                        .orElse(new ErrorParsingCommand(output, "Invalid Command"));
             }
-        } catch (ParseException Pe) {
+        }
+        catch (ParseException Pe) {
             command = new ErrorParsingCommand(output, Pe.getMessage());
         }
 
         return command;
+    }
+
+    private Command parseDefinition(ConsoleCommandDefinition definition, CommandLine line, String[] args) {
+        try {
+            return definition.parse(output, webClient, getHost(line), parser, removeCommandAndRemote(args, definition.option()));
+        }
+        catch (ParseException Pe) {
+            return new ErrorParsingCommand(output, Pe.getMessage());
+        }
     }
 
     private String getHost(CommandLine line) {

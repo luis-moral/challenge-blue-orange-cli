@@ -15,6 +15,9 @@ public class EditNoteCommandDefinition extends ConsoleCommandDefinition<EditNote
 
     public EditNoteCommandDefinition() {
         super(
+            "edit_note",
+            "",
+            "Edits a creator's custom note",
             Option.builder(ARGUMENT_CREATOR_ID).required().hasArg().desc("Note id").build(),
             Option.builder(ARGUMENT_NOTE).required().hasArg().desc("Text of the note").build()
         );
@@ -30,6 +33,7 @@ public class EditNoteCommandDefinition extends ConsoleCommandDefinition<EditNote
                 webClient,
                 host,
                 Integer.parseInt(line.getOptionValue(ARGUMENT_CREATOR_ID)),
-                line.getOptionValue(ARGUMENT_NOTE));
+                line.getOptionValue(ARGUMENT_NOTE)
+            );
     }
 }

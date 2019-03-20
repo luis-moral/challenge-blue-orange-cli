@@ -15,6 +15,9 @@ public class CreateNoteCommandDefinition extends ConsoleCommandDefinition<Create
 
     public CreateNoteCommandDefinition() {
         super(
+            "add_note",
+            "",
+            "Adds a custom note to a creator",
             Option.builder(ARGUMENT_CREATOR_ID).required().hasArg().desc("Creator id").build(),
             Option.builder(ARGUMENT_NOTE).required().hasArg().desc("Text of the note").build()
         );
@@ -30,6 +33,7 @@ public class CreateNoteCommandDefinition extends ConsoleCommandDefinition<Create
                 webClient,
                 host,
                 Integer.parseInt(line.getOptionValue(ARGUMENT_CREATOR_ID)),
-                line.getOptionValue(ARGUMENT_NOTE));
+                line.getOptionValue(ARGUMENT_NOTE)
+            );
     }
 }
