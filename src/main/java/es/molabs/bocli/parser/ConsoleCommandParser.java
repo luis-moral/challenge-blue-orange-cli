@@ -97,7 +97,7 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
                         .map(option -> definitionMap.get(option))
                         .map(definition -> parseDefinition(definition, line, args))
                         .findFirst()
-                        .orElse(new ErrorParsingCommand(output, "Invalid Command"));
+                        .orElse(new ErrorParsingCommand(output, "Invalid command. Use -help to view available options."));
             }
         }
         catch (ParseException Pe) {
