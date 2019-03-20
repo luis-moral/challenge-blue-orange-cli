@@ -97,4 +97,64 @@ public class WebClientShould {
                     .withRequestBody(WireMock.equalToJson(requestBody))
             );
     }
+
+    @Test public void
+    process_put_requests() throws IOException {
+        String noteId = "1";
+
+        String requestBody =
+            Json
+                .object()
+                .add("creatorId", 3)
+                .add("text", "Test note")
+                .toString();
+
+        apiMock
+            .stubFor(
+                WireMock
+                    .put(WireMock.urlPathEqualTo("/api/creator/note/" + noteId))
+                    .withRequestBody(WireMock.equalToJson(requestBody))
+                    .willReturn(
+                        WireMock
+                            .aResponse()
+                            .withStatus(200)
+                            .withHeader("Content-Type", "application/json")
+                    )
+            );
+
+        webClient.put("http://localhost:8080/api/creator/note", noteId, requestBody);
+
+        apiMock
+            .verify(
+                WireMock
+                    .putRequestedFor(WireMock.urlPathEqualTo("/api/creator/note/" + noteId))
+                    .withRequestBody(WireMock.equalToJson(requestBody))
+            );
+    }
+
+    @Test public void
+    process_delete_requests() throws IOException {
+        String noteId = "1";
+
+        apiMock
+            .stubFor(
+                WireMock
+                    .delete(WireMock.urlPathEqualTo("/api/creator/note/" + noteId))
+                    .withRequestBody(WireMock.absent())
+                    .willReturn(
+                        WireMock
+                            .aResponse()
+                            .withStatus(200)
+                            .withHeader("Content-Type", "application/json")
+                    )
+            );
+
+        webClient.delete("http://localhost:8080/api/creator/note", noteId);
+
+        apiMock
+            .verify(
+                WireMock
+                    .deleteRequestedFor(WireMock.urlPathEqualTo("/api/creator/note/" + noteId))
+            );
+    }
 }

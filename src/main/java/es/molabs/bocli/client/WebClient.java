@@ -12,7 +12,6 @@ public class WebClient {
 
     public String get(String url, Map<String, String> queryString) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url + buildQueryString(queryString)).openConnection();
-
         String body = readBody(connection);
         connection.disconnect();
 
@@ -21,17 +20,20 @@ public class WebClient {
 
     public void post(String url, String requestBody) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.setDoOutput(true);
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-type", "application/json");
-        connection.setRequestProperty("Accept", "*/*");
+        sendBody(connection, "POST", requestBody);
+        connection.disconnect();
+    }
 
-        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-        writer.write(requestBody);
-        writer.flush();
-        writer.close();
+    public void put(String url, String id, String requestBody) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url + "/" + id).openConnection();
+        sendBody(connection, "PUT", requestBody);
+        connection.disconnect();
+    }
 
-        connection.getResponseCode();
+    public void delete(String url, String id) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url + "/" + id).openConnection();
+        sendBody(connection, "DELETE", null);
+        connection.disconnect();
     }
 
     private String buildQueryString(Map<String, String> queryString) {
@@ -55,6 +57,22 @@ public class WebClient {
         }
 
         return encodedValue;
+    }
+
+    private void sendBody(HttpURLConnection connection, String method, String requestBody) throws IOException {
+        connection.setDoOutput(true);
+        connection.setRequestMethod(method);
+        connection.setRequestProperty("Content-type", "application/json");
+        connection.setRequestProperty("Accept", "*/*");
+
+        if (requestBody != null) {
+            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+            writer.write(requestBody);
+            writer.flush();
+            writer.close();
+        }
+
+        connection.getResponseCode();
     }
 
     private String readBody(HttpURLConnection urlConnection) throws IOException {
