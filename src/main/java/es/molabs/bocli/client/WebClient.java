@@ -15,7 +15,7 @@ public class WebClient {
 
         String body = readResponseBody(connection);
 
-        validateReponseCode(connection);
+        validateResponseCode(connection);
         connection.disconnect();
 
         return body;
@@ -27,7 +27,7 @@ public class WebClient {
         sendRequestBody(connection, "POST", requestBody);
         String body = readResponseBody(connection);
 
-        validateReponseCode(connection);
+        validateResponseCode(connection);
         connection.disconnect();
 
         return body;
@@ -39,7 +39,7 @@ public class WebClient {
         sendRequestBody(connection, "PUT", requestBody);
         String body = readResponseBody(connection);
 
-        validateReponseCode(connection);
+        validateResponseCode(connection);
         connection.disconnect();
 
         return body;
@@ -50,7 +50,7 @@ public class WebClient {
 
         sendRequestBody(connection, "DELETE", null);
 
-        validateReponseCode(connection);
+        validateResponseCode(connection);
         connection.disconnect();
     }
 
@@ -93,7 +93,7 @@ public class WebClient {
         connection.getResponseCode();
     }
 
-    private void validateReponseCode(HttpURLConnection connection) throws IOException {
+    private void validateResponseCode(HttpURLConnection connection) throws IOException {
         int responseCode = connection.getResponseCode();
 
         if (responseCode >= 300) {
