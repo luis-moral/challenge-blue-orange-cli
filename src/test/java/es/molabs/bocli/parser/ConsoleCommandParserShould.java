@@ -1,9 +1,7 @@
 package es.molabs.bocli.parser;
 
 import es.molabs.bocli.client.WebClient;
-import es.molabs.bocli.command.Command;
-import es.molabs.bocli.command.CreateNoteCommand;
-import es.molabs.bocli.command.ListCreatorsCommand;
+import es.molabs.bocli.command.*;
 import es.molabs.bocli.ouput.Output;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
@@ -25,10 +23,6 @@ public class ConsoleCommandParserShould {
     @Before
     public void setUp() {
         commandParser = new ConsoleCommandParser(output, webClient);
-    }
-    
-    @Test public void 
-    use_localhost_if_remote_not_specified() {
     }
 
     @Test public void
@@ -62,12 +56,34 @@ public class ConsoleCommandParserShould {
 
     @Test public void
     parse_create_note_commands() {
-        String[] args = {"-add", "-creatorId", "5", "-note", "Some text"};
+        String[] args = {"-add_note", "-creatorId", "5", "-note", "Some text"};
 
         Command createNoteCommand = commandParser.parse(args);
 
         Assertions
             .assertThat(createNoteCommand)
             .isEqualTo(new CreateNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, "5", "Some text"));
+    }
+    
+    @Test public void
+    parse_edit_note_commands() {
+        String[] args = {"-edit_note", "-id", "10", "-note", "Some text"};
+
+        Command createNoteCommand = commandParser.parse(args);
+
+        Assertions
+            .assertThat(createNoteCommand)
+            .isEqualTo(new EditNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, "10", "Some text"));
+    }
+    
+    @Test public void 
+    parse_delete_note_commands() {
+        String[] args = {"-delete_note", "-id", "15"};
+
+        Command createNoteCommand = commandParser.parse(args);
+
+        Assertions
+            .assertThat(createNoteCommand)
+            .isEqualTo(new DeleteNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, "15"));
     }
 }

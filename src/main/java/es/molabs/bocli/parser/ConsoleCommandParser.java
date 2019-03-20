@@ -6,6 +6,8 @@ import es.molabs.bocli.command.ErrorParsingCommand;
 import es.molabs.bocli.command.ShowHelpCommand;
 import es.molabs.bocli.ouput.Output;
 import es.molabs.bocli.parser.definition.CreateNoteCommandDefinition;
+import es.molabs.bocli.parser.definition.DeleteNoteCommandDefinition;
+import es.molabs.bocli.parser.definition.EditNoteCommandDefinition;
 import es.molabs.bocli.parser.definition.ListCreatorsCommandDefinition;
 import org.apache.commons.cli.*;
 
@@ -19,7 +21,9 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
 
     private static final String COMMAND_HELP = "help";
     private static final String COMMAND_LIST = "list";
-    private static final String COMMAND_CREATE_NOTE = "add";
+    private static final String COMMAND_CREATE_NOTE = "add_note";
+    private static final String COMMAND_EDIT_NOTE = "edit_note";
+    private static final String COMMAND_DELETE_NOTE = "delete_note";
 
     private final WebClient webClient;
     private final Output output;
@@ -40,6 +44,8 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         actions.addOption(actionOption(COMMAND_HELP, "Show available options"));
         actions.addOption(actionOption(COMMAND_LIST, "Lists creators"));
         actions.addOption(actionOption(COMMAND_CREATE_NOTE, "Adds a custom note to a creator"));
+        actions.addOption(actionOption(COMMAND_EDIT_NOTE, "Edits a creator's custom note"));
+        actions.addOption(actionOption(COMMAND_DELETE_NOTE, "Deletes a creator's custom note"));
 
         return actions;
     }
@@ -73,6 +79,16 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
                 command =
                     new CreateNoteCommandDefinition()
                         .parse(output, webClient, DEFAULT_HOST, parser, removeArgument(args, COMMAND_CREATE_NOTE));
+            }
+            else if (actionLine.hasOption(COMMAND_EDIT_NOTE)) {
+                command =
+                    new EditNoteCommandDefinition()
+                        .parse(output, webClient, DEFAULT_HOST, parser, removeArgument(args, COMMAND_EDIT_NOTE));
+            }
+            else if (actionLine.hasOption(COMMAND_DELETE_NOTE)) {
+                command =
+                    new DeleteNoteCommandDefinition()
+                        .parse(output, webClient, DEFAULT_HOST, parser, removeArgument(args, COMMAND_DELETE_NOTE));
             }
             else {
                 command = new ErrorParsingCommand(output, "Invalid Command");
