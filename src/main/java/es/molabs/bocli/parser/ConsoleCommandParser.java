@@ -95,7 +95,14 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         CommandLine line = parser.parse(listCommandOptions(), args);
         String[] filter = line.getOptionValues(COMMAND_LIST_FILTER);
 
-        return new ListCreatorsCommand(output, webClient, DEFAULT_HOST, filter[0], filter[1], line.getOptionValue(COMMAND_LIST_SORT));
+        return
+            new ListCreatorsCommand(
+                output,
+                webClient,
+                DEFAULT_HOST,
+                filter != null ? filter[0] : null,
+                filter != null ? filter[1] : null,
+                line.getOptionValue(COMMAND_LIST_SORT));
     }
 
     private String buildHelpMessage() {

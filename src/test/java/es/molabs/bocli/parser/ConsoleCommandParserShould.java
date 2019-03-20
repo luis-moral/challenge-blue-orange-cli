@@ -32,15 +32,30 @@ public class ConsoleCommandParserShould {
 
     @Test public void
     parse_list_creator_commands() {
-        String[] args = {"-list", "-filter", "comics=3", "-sort", "fullName"};
+        String[] noArguments = {"-list"};
+        String[] onlyFilter = {"-list", "-filter", "comics=3"};
+        String[] onlySorting = {"-list", "-sort", "fullName"};
+        String[] allArguments = {"-list", "-filter", "comics=3", "-sort", "fullName"};
 
-        Command command = commandParser.parse(args);
-
-        ListCreatorsCommand listCreatorsCommand
-            = new ListCreatorsCommand(output, webClient, "http://localhost:8080", "comics", "3", "fullName");
+        Command noArgumentsCommand = commandParser.parse(noArguments);
+        Command onlyFilterCommand = commandParser.parse(onlyFilter);
+        Command onlySortingCommand = commandParser.parse(onlySorting);
+        Command allArgumentsCommand = commandParser.parse(allArguments);
 
         Assertions
-            .assertThat(command)
-            .isEqualTo(listCreatorsCommand);
+            .assertThat(noArgumentsCommand)
+            .isEqualTo(new ListCreatorsCommand(output, webClient, "http://localhost:8080", null, null, null));
+
+        Assertions
+            .assertThat(onlyFilterCommand)
+            .isEqualTo(new ListCreatorsCommand(output, webClient, "http://localhost:8080", "comics", "3", null));
+
+        Assertions
+            .assertThat(onlySortingCommand)
+            .isEqualTo(new ListCreatorsCommand(output, webClient, "http://localhost:8080", null, null, "fullName"));
+
+        Assertions
+            .assertThat(allArgumentsCommand)
+            .isEqualTo(new ListCreatorsCommand(output, webClient, "http://localhost:8080", "comics", "3", "fullName"));
     }
 }
