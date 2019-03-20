@@ -32,8 +32,9 @@ public class EditNoteCommand implements Command {
         try {
             message =
                 webClient
-                    .post(
-                        host + PATH_CREATOR_NOTE + "/" + id,
+                    .put(
+                        host + PATH_CREATOR_NOTE ,
+                        Integer.toString(id),
                         Json
                             .object()
                             .add("note", note)

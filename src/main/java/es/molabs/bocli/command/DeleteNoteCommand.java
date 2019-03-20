@@ -3,9 +3,12 @@ package es.molabs.bocli.command;
 import es.molabs.bocli.client.WebClient;
 import es.molabs.bocli.ouput.Output;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class DeleteNoteCommand implements Command {
+
+    private static final String PATH_CREATOR_NOTE = "/api/creator/note";
 
     private final Output output;
     private final WebClient webClient;
@@ -21,7 +24,20 @@ public class DeleteNoteCommand implements Command {
 
     @Override
     public void execute() {
-        throw new UnsupportedOperationException();
+        String message = "";
+
+        try {
+            webClient
+                .delete(
+                    host + PATH_CREATOR_NOTE,
+                    Integer.toString(id)
+                );
+        }
+        catch (IOException IOe) {
+            message = IOe.getMessage();
+        }
+
+        output.printLine(message);
     }
 
     @Override
