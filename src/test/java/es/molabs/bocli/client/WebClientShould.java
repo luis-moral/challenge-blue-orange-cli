@@ -1,6 +1,6 @@
 package es.molabs.bocli.client;
 
-
+import com.eclipsesource.json.Json;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import es.molabs.bocli.util.TestUtils;
@@ -37,7 +37,7 @@ public class WebClientShould {
     }
 
     @Test public void
-    return_body_for_get_requests() throws IOException {
+    return_response_body_for_get_requests() throws IOException {
         String expectedBody = TestUtils.readFile("/creator/get_two_creators.json");
 
         apiMock
@@ -64,5 +64,37 @@ public class WebClientShould {
         Assertions
             .assertThat(body)
             .isEqualToNormalizingNewlines(expectedBody);
+    }
+
+    @Test public void
+    process_post_requests() throws IOException {
+        String requestBody =
+            Json
+                .object()
+                .add("creatorId", 3)
+                .add("text", "Test note")
+                .toString();
+
+        apiMock
+            .stubFor(
+                WireMock
+                    .post(WireMock.urlPathEqualTo("/api/creator/note"))
+                    .withRequestBody(WireMock.equalToJson(requestBody))
+                    .willReturn(
+                        WireMock
+                            .aResponse()
+                            .withStatus(200)
+                            .withHeader("Content-Type", "application/json")
+                    )
+            );
+
+        webClient.post("http://localhost:8080/api/creator/note", requestBody);
+
+        apiMock
+            .verify(
+                WireMock
+                    .postRequestedFor(WireMock.urlPathEqualTo("/api/creator/note"))
+                    .withRequestBody(WireMock.equalToJson(requestBody))
+            );
     }
 }

@@ -1,9 +1,6 @@
 package es.molabs.bocli.client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -14,11 +11,27 @@ import java.util.stream.Collectors;
 public class WebClient {
 
     public String get(String url, Map<String, String> queryString) throws IOException {
-        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url + buildQueryString(queryString)).openConnection();
-        String body = readBody(urlConnection);
-        urlConnection.disconnect();
+        HttpURLConnection connection = (HttpURLConnection) new URL(url + buildQueryString(queryString)).openConnection();
+
+        String body = readBody(connection);
+        connection.disconnect();
 
         return body;
+    }
+
+    public void post(String url, String requestBody) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-type", "application/json");
+        connection.setRequestProperty("Accept", "*/*");
+
+        OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+        writer.write(requestBody);
+        writer.flush();
+        writer.close();
+
+        connection.getResponseCode();
     }
 
     private String buildQueryString(Map<String, String> queryString) {
@@ -56,6 +69,8 @@ public class WebClient {
 
             body.append(inputLine);
         }
+
+        reader.close();
 
         return body.toString();
     }
