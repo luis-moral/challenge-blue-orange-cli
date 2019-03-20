@@ -42,9 +42,22 @@ public class CliFeature {
             apiMock.stop();
         }
     }
+    
+    @Test public void 
+    user_can_view_cli_help() throws IOException {
+        String expectedOutput = TestUtils.readFile("/help/help.output");
+
+        String[] args = {"-help"};
+
+        commandParser.parse(args).execute();
+
+        Assertions
+            .assertThat(output.getLine(0))
+            .isEqualToIgnoringNewLines(expectedOutput);
+    }
 
     @Test public void 
-    users_can_query_creators_with_a_filter_and_sorting() throws IOException {
+    user_can_query_creators_with_a_filter_and_sorting() throws IOException {
         String expectedBody = TestUtils.readFile("/creator/get_two_creators.json");
 
         apiMock
@@ -72,7 +85,7 @@ public class CliFeature {
     }
 
     @Test public void
-    users_can_create_edit_and_delete_creator_notes() {
+    user_can_create_edit_and_delete_creator_notes() {
         String createNoteResponse =
             Json
                 .object()

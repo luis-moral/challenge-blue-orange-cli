@@ -13,12 +13,14 @@ import java.util.Arrays;
 public abstract class ConsoleCommandDefinition<T extends Command> {
 
     private final String option;
+    private final boolean optionalArgument;
     private final String argumentName;
     private final String description;
     private final Options commandOptions;
 
-    public ConsoleCommandDefinition(String option, String argumentName, String description, Option...options) {
+    public ConsoleCommandDefinition(String option, boolean optionalArgument, String argumentName, String description, Option... options) {
         this.option = option;
+        this.optionalArgument = optionalArgument;
         this.argumentName = argumentName;
         this.description = description;
 
@@ -35,6 +37,10 @@ public abstract class ConsoleCommandDefinition<T extends Command> {
 
     public String option() {
         return option;
+    }
+
+    public boolean optionalArgument() {
+        return optionalArgument;
     }
 
     public String argumentName() {

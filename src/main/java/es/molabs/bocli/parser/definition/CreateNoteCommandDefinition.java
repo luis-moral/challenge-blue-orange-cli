@@ -16,7 +16,8 @@ public class CreateNoteCommandDefinition extends ConsoleCommandDefinition<Create
     public CreateNoteCommandDefinition() {
         super(
             "add_note",
-            "",
+            false,
+            "-" + ARGUMENT_CREATOR_ID + " id -" + ARGUMENT_NOTE + " text",
             "Adds a custom note to a creator",
             Option.builder(ARGUMENT_CREATOR_ID).required().hasArg().desc("Creator id").build(),
             Option.builder(ARGUMENT_NOTE).required().hasArg().desc("Text of the note").build()

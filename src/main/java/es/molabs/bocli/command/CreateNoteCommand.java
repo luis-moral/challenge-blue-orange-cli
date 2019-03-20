@@ -4,7 +4,6 @@ import com.eclipsesource.json.Json;
 import es.molabs.bocli.client.WebClient;
 import es.molabs.bocli.ouput.Output;
 
-import java.io.IOException;
 import java.util.Objects;
 
 public class CreateNoteCommand extends WebClientCommand {

@@ -1,10 +1,8 @@
 package es.molabs.bocli.command;
 
-import com.eclipsesource.json.Json;
 import es.molabs.bocli.client.WebClient;
 import es.molabs.bocli.ouput.Output;
 
-import java.io.IOException;
 import java.util.Objects;
 
 public class DeleteNoteCommand extends WebClientCommand {

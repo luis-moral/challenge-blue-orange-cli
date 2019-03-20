@@ -16,7 +16,8 @@ public class EditNoteCommandDefinition extends ConsoleCommandDefinition<EditNote
     public EditNoteCommandDefinition() {
         super(
             "edit_note",
-            "",
+            false,
+            "-" + ARGUMENT_CREATOR_ID + " id -" + ARGUMENT_NOTE + " text",
             "Edits a creator's custom note",
             Option.builder(ARGUMENT_CREATOR_ID).required().hasArg().desc("Note id").build(),
             Option.builder(ARGUMENT_NOTE).required().hasArg().desc("Text of the note").build()

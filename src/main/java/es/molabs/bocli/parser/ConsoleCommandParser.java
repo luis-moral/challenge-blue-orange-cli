@@ -55,7 +55,7 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         Options options = new Options();
 
         options.addOption(Option.builder(COMMAND_HELP).desc("Show available options").build());
-        options.addOption(Option.builder(ARGUMENT_SERVER).argName("url").hasArg().desc("Specifies the api server base url").build());
+        options.addOption(Option.builder(ARGUMENT_SERVER).argName("url").hasArg().desc("Specifies the api server url (defaults to localhost)").build());
 
         definitionMap
             .values()
@@ -132,7 +132,7 @@ public class ConsoleCommandParser implements CommandParser<String[]> {
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
 
-        helpFormatter.printHelp(printWriter, 74, "bo-cli", "", commandOptions(), 1, 3, "");
+        helpFormatter.printHelp(printWriter, 120, "bo-cli", "", commandOptions(), 1, 3, "");
 
         return stringWriter.toString();
     }

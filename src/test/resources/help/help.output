@@ -1,0 +1,7 @@
+usage: bo-cli
+ -add_note <-creatorId id -note text>          Adds a custom note to a creator
+ -delete_note <-id id>                         Deletes a creator's custom note
+ -edit_note <-id id -note text>                Edits a creator's custom note
+ -help                                         Show available options
+ -list <[-filter field=value] [-sort field]>   Lists creators, optionally filtered or sorted by a field
+ -server <url>                                 Specifies the api server url (defaults to localhost)

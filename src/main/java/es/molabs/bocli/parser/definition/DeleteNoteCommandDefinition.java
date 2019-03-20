@@ -15,7 +15,8 @@ public class DeleteNoteCommandDefinition extends ConsoleCommandDefinition<Delete
     public DeleteNoteCommandDefinition() {
         super(
             "delete_note",
-            "",
+            false,
+            "-" + ARGUMENT_CREATOR_ID + " id",
             "Deletes a creator's custom note",
             Option.builder(ARGUMENT_CREATOR_ID).required().hasArg().desc("Note id").build()
         );

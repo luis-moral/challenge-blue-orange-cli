@@ -16,8 +16,9 @@ public class ListCreatorsCommandDefinition extends ConsoleCommandDefinition<List
     public ListCreatorsCommandDefinition() {
         super(
             "list",
-            "",
-            "Lists creators",
+            true,
+            "[-" + ARGUMENT_FILTER + " field=value] [-" + ARGUMENT_SORT + " field]",
+            "Lists creators, optionally filtered or sorted by a field",
             Option.builder(ARGUMENT_FILTER).desc("Field to filter").numberOfArgs(2).valueSeparator('=').build(),
             Option.builder(ARGUMENT_SORT).hasArg().desc("Field to sort").build()
         );
