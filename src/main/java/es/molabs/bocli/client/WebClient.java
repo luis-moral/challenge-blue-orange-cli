@@ -12,7 +12,10 @@ public class WebClient {
 
     public String get(String url, Map<String, String> queryString) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url + buildQueryString(queryString)).openConnection();
-        String body = readBody(connection);
+
+        String body = readResponseBody(connection);
+
+        validateReponseCode(connection);
         connection.disconnect();
 
         return body;
@@ -20,19 +23,28 @@ public class WebClient {
 
     public void post(String url, String requestBody) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        sendBody(connection, "POST", requestBody);
+
+        sendRequestBody(connection, "POST", requestBody);
+
+        validateReponseCode(connection);
         connection.disconnect();
     }
 
     public void put(String url, String id, String requestBody) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url + "/" + id).openConnection();
-        sendBody(connection, "PUT", requestBody);
+
+        sendRequestBody(connection, "PUT", requestBody);
+
+        validateReponseCode(connection);
         connection.disconnect();
     }
 
     public void delete(String url, String id) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url + "/" + id).openConnection();
-        sendBody(connection, "DELETE", null);
+
+        sendRequestBody(connection, "DELETE", null);
+
+        validateReponseCode(connection);
         connection.disconnect();
     }
 
@@ -59,7 +71,7 @@ public class WebClient {
         return encodedValue;
     }
 
-    private void sendBody(HttpURLConnection connection, String method, String requestBody) throws IOException {
+    private void sendRequestBody(HttpURLConnection connection, String method, String requestBody) throws IOException {
         connection.setDoOutput(true);
         connection.setRequestMethod(method);
         connection.setRequestProperty("Content-type", "application/json");
@@ -75,7 +87,15 @@ public class WebClient {
         connection.getResponseCode();
     }
 
-    private String readBody(HttpURLConnection urlConnection) throws IOException {
+    private void validateReponseCode(HttpURLConnection connection) throws IOException {
+        int responseCode = connection.getResponseCode();
+
+        if (responseCode >= 300) {
+            throw new InvalidResponseCodeException(responseCode);
+        }
+    }
+
+    private String readResponseBody(HttpURLConnection urlConnection) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
         StringBuilder body = new StringBuilder();
         String inputLine;

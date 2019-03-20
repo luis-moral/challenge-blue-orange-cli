@@ -37,7 +37,7 @@ public class WebClientShould {
     }
 
     @Test public void
-    return_response_body_for_get_requests() throws IOException {
+    read_response_body_for_get_requests() throws IOException {
         String expectedBody = TestUtils.readFile("/creator/get_two_creators.json");
 
         apiMock
@@ -140,7 +140,6 @@ public class WebClientShould {
             .stubFor(
                 WireMock
                     .delete(WireMock.urlPathEqualTo("/api/creator/note/" + noteId))
-                    .withRequestBody(WireMock.absent())
                     .willReturn(
                         WireMock
                             .aResponse()
@@ -155,6 +154,26 @@ public class WebClientShould {
             .verify(
                 WireMock
                     .deleteRequestedFor(WireMock.urlPathEqualTo("/api/creator/note/" + noteId))
+                    .withHeader("Content-Type", WireMock.equalTo("application/json"))
             );
+    }
+
+    @Test(expected = InvalidResponseCodeException.class) public void
+    throw_exception_is_response_code_is_not_valid() throws IOException {
+        String noteId = "1";
+
+        apiMock
+            .stubFor(
+                WireMock
+                    .delete(WireMock.urlPathEqualTo("/api/creator/note/" + noteId))
+                    .willReturn(
+                        WireMock
+                            .aResponse()
+                            .withStatus(400)
+                            .withHeader("Content-Type", "application/json")
+                    )
+            );
+
+        webClient.delete("http://localhost:8080/api/creator/note", noteId);
     }
 }
