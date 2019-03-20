@@ -1,5 +1,6 @@
 package es.molabs.bocli;
 
+import com.eclipsesource.json.Json;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import es.molabs.bocli.client.WebClient;
@@ -43,7 +44,7 @@ public class CliFeature {
     }
 
     @Test public void 
-    user_can_query_creators_with_a_filter_and_sorting() throws IOException {
+    users_can_query_creators_with_a_filter_and_sorting() throws IOException {
         String expectedBody = TestUtils.readFile("/creator/get_two_creators.json");
 
         apiMock
@@ -68,6 +69,82 @@ public class CliFeature {
         Assertions
             .assertThat(output.getLine(0))
             .isEqualToNormalizingNewlines(expectedBody);
+    }
+
+    @Test public void
+    users_can_create_edit_and_delete_creator_notes() {
+        String createNoteResponse =
+            Json
+                .object()
+                .add("id", 1)
+                .add("creatorId", 5)
+                .add("note", "Some text")
+                .toString();
+
+        String editNoteResponse =
+            Json
+                .object()
+                .add("note", "Other text")
+                .toString();
+
+        apiMock
+            .stubFor(
+                WireMock
+                    .post(WireMock.urlPathEqualTo("/api/creator/note"))
+                    .willReturn(
+                        WireMock
+                            .aResponse()
+                            .withStatus(200)
+                            .withHeader("Content-Type", "application/json")
+                            .withBody(createNoteResponse)
+                    )
+            );
+
+        apiMock
+            .stubFor(
+                WireMock
+                    .put(WireMock.urlPathEqualTo("/api/creator/note/1"))
+                    .willReturn(
+                        WireMock
+                            .aResponse()
+                            .withStatus(200)
+                            .withHeader("Content-Type", "application/json")
+                            .withBody(editNoteResponse)
+                    )
+            );
+
+        apiMock
+            .stubFor(
+                WireMock
+                    .delete(WireMock.urlPathEqualTo("/api/creator/note/1"))
+                    .willReturn(
+                        WireMock
+                            .aResponse()
+                            .withStatus(200)
+                            .withHeader("Content-Type", "application/json")
+                    )
+            );
+
+
+        String[] createNoteArgs = {"-add_note", "-creatorId", "5", "-note", "Some text"};
+        String[] editNoteArgs = {"-edit_note", "-id", "1", "-note", "Other text"};
+        String[] deleteNoteArgs = {"-delete_note", "-id", "1"};
+
+        commandParser.parse(createNoteArgs).execute();
+        commandParser.parse(editNoteArgs).execute();
+        commandParser.parse(deleteNoteArgs).execute();
+
+        Assertions
+            .assertThat(output.getLine(0))
+            .isEqualToNormalizingNewlines(createNoteResponse);
+
+        Assertions
+            .assertThat(output.getLine(1))
+            .isEqualToNormalizingNewlines(editNoteResponse);
+
+        Assertions
+            .assertThat(output.getLine(2))
+            .isEqualToNormalizingNewlines("");
     }
 
     private class TestOutput implements Output {
