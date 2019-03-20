@@ -33,13 +33,16 @@ public class WebClient {
         return body;
     }
 
-    public void put(String url, String id, String requestBody) throws IOException {
+    public String put(String url, String id, String requestBody) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url + "/" + id).openConnection();
 
         sendRequestBody(connection, "PUT", requestBody);
+        String body = readResponseBody(connection);
 
         validateReponseCode(connection);
         connection.disconnect();
+
+        return body;
     }
 
     public void delete(String url, String id) throws IOException {

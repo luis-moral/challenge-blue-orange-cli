@@ -67,7 +67,7 @@ public class WebClientShould {
     }
 
     @Test public void
-    read_response_body_post_requests() throws IOException {
+    read_response_body_for_post_requests() throws IOException {
         String requestBody =
             Json
                 .object()
@@ -112,12 +112,20 @@ public class WebClientShould {
     }
 
     @Test public void
-    process_put_requests() throws IOException {
+    read_response_body_for_put_requests() throws IOException {
         String noteId = "1";
 
         String requestBody =
             Json
                 .object()
+                .add("id", 1)
+                .add("note", "Test note")
+                .toString();
+
+        String expectedResponseBody =
+            Json
+                .object()
+                .add("id", 1)
                 .add("creatorId", 3)
                 .add("note", "Test note")
                 .toString();
@@ -132,10 +140,15 @@ public class WebClientShould {
                             .aResponse()
                             .withStatus(200)
                             .withHeader("Content-Type", "application/json")
+                            .withBody(expectedResponseBody)
                     )
             );
 
-        webClient.put("http://localhost:8080/api/creator/note", noteId, requestBody);
+        String responseBody = webClient.put("http://localhost:8080/api/creator/note", noteId, requestBody);
+
+        Assertions
+            .assertThat(responseBody)
+            .isEqualTo(expectedResponseBody);
 
         apiMock
             .verify(
