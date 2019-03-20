@@ -4,64 +4,52 @@ import com.eclipsesource.json.Json;
 import es.molabs.bocli.client.WebClient;
 import es.molabs.bocli.ouput.Output;
 
-import java.io.IOException;
 import java.util.Objects;
 
-public class EditNoteCommand implements Command {
+public class EditNoteCommand extends WebClientCommand {
 
     private static final String PATH_CREATOR_NOTE = "/api/creator/note";
 
-    private final Output output;
-    private final WebClient webClient;
-    private final String host;
     private final int id;
     private final String note;
 
     public EditNoteCommand(Output output, WebClient webClient, String host, int id, String note) {
-        this.output = output;
-        this.webClient = webClient;
-        this.host = host;
+        super(output, webClient, host);
+
         this.id = id;
         this.note = note;
     }
 
     @Override
     public void execute() {
-        String message;
-
-        try {
-            message =
-                webClient
-                    .put(
-                        host + PATH_CREATOR_NOTE ,
-                        Integer.toString(id),
-                        Json
-                            .object()
-                            .add("note", note)
-                            .toString()
-                    );
-        }
-        catch (IOException IOe) {
-            message = IOe.getMessage();
-        }
-
-        output.printLine(message);
+        getOutput()
+            .printLine(
+                call(() ->
+                    getWebClient()
+                        .put(
+                            getHost() + PATH_CREATOR_NOTE ,
+                            Integer.toString(id),
+                            Json
+                                .object()
+                                .add("note", note)
+                                .toString()
+                        )
+                )
+            );
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         EditNoteCommand that = (EditNoteCommand) o;
-        return Objects.equals(output, that.output) &&
-            Objects.equals(webClient, that.webClient) &&
-            Objects.equals(host, that.host) &&
-            Objects.equals(id, that.id) &&
+        return id == that.id &&
             Objects.equals(note, that.note);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(output, webClient, host, id, note);
+        return Objects.hash(super.hashCode(), id, note);
     }
 }

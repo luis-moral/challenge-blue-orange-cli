@@ -45,13 +45,16 @@ public class WebClient {
         return body;
     }
 
-    public void delete(String url, String id) throws IOException {
+    public String delete(String url, String id) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url + "/" + id).openConnection();
 
         sendRequestBody(connection, "DELETE", null);
+        String body = readResponseBody(connection);
 
         validateResponseCode(connection);
         connection.disconnect();
+
+        return body;
     }
 
     private String buildQueryString(Map<String, String> queryString) {

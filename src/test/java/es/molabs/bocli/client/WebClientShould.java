@@ -161,6 +161,7 @@ public class WebClientShould {
     @Test public void
     process_delete_requests() throws IOException {
         String noteId = "1";
+        String expectedResponseBody = "";
 
         apiMock
             .stubFor(
@@ -171,10 +172,15 @@ public class WebClientShould {
                             .aResponse()
                             .withStatus(200)
                             .withHeader("Content-Type", "application/json")
+                            .withBody(expectedResponseBody)
                     )
             );
 
-        webClient.delete("http://localhost:8080/api/creator/note", noteId);
+        String responseBody = webClient.delete("http://localhost:8080/api/creator/note", noteId);
+
+        Assertions
+            .assertThat(responseBody)
+            .isEqualTo(expectedResponseBody);
 
         apiMock
             .verify(
@@ -195,7 +201,7 @@ public class WebClientShould {
                     .willReturn(
                         WireMock
                             .aResponse()
-                            .withStatus(400)
+                            .withStatus(300)
                             .withHeader("Content-Type", "application/json")
                     )
             );

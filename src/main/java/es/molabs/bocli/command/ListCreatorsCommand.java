@@ -5,6 +5,7 @@ import es.molabs.bocli.ouput.Output;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ListCreatorsCommand extends WebClientCommand {
 
@@ -43,5 +44,21 @@ public class ListCreatorsCommand extends WebClientCommand {
         }
 
         return queryString;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ListCreatorsCommand that = (ListCreatorsCommand) o;
+        return Objects.equals(filterField, that.filterField) &&
+            Objects.equals(filterValue, that.filterValue) &&
+            Objects.equals(sortValue, that.sortValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), filterField, filterValue, sortValue);
     }
 }
