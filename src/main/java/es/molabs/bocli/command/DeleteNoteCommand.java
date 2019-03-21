@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class DeleteNoteCommand extends WebClientCommand {
 
-    private static final String PATH_CREATOR_NOTE = "/api/creator/note";
+    public static final String PATH_CREATOR_NOTE = "/api/v1/public/creators/notes";
 
     private final int id;
 

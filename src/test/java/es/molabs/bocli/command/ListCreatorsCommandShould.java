@@ -31,14 +31,14 @@ public class ListCreatorsCommandShould {
         String responseBody = TestUtils.readFile("/creator/get_two_creators.json");
 
         Mockito
-            .when(webClient.get(ConsoleCommandParser.DEFAULT_HOST + "/api/creators", queryString))
+            .when(webClient.get(ConsoleCommandParser.DEFAULT_HOST + ListCreatorsCommand.PATH_CREATORS, queryString))
             .thenReturn(responseBody);
 
         new ListCreatorsCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, "comics", "3", "fullName").execute();
 
         Mockito
             .verify(webClient, Mockito.times(1))
-            .get(ConsoleCommandParser.DEFAULT_HOST + "/api/creators", queryString);
+            .get(ConsoleCommandParser.DEFAULT_HOST + ListCreatorsCommand.PATH_CREATORS, queryString);
 
         Mockito
             .verify(output, Mockito.times(1))

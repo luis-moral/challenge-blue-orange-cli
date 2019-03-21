@@ -9,7 +9,8 @@ import java.util.Objects;
 
 public class ListCreatorsCommand extends WebClientCommand {
 
-    private static final String PATH_CREATORS = "/api/creators";
+    public static final String PATH_CREATORS = "/api/v1/public/creators";
+
     private static final String FIELD_SORT = "sort";
 
     private final String filterField;

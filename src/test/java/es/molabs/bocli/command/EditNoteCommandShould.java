@@ -37,14 +37,14 @@ public class EditNoteCommandShould {
                 .toString();
 
         Mockito
-            .when(webClient.put(ConsoleCommandParser.DEFAULT_HOST + "/api/creator/note", "1", requestBody))
+            .when(webClient.put(ConsoleCommandParser.DEFAULT_HOST + EditNoteCommand.PATH_CREATOR_NOTE, "1", requestBody))
             .thenReturn(responseBody);
 
         new EditNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, 1, "Some Note").execute();
 
         Mockito
             .verify(webClient, Mockito.times(1))
-            .put(ConsoleCommandParser.DEFAULT_HOST + "/api/creator/note", "1", requestBody);
+            .put(ConsoleCommandParser.DEFAULT_HOST + EditNoteCommand.PATH_CREATOR_NOTE, "1", requestBody);
 
         Mockito
             .verify(output, Mockito.times(1))

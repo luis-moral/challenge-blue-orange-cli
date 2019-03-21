@@ -38,14 +38,14 @@ public class CreateNoteCommandShould {
                 .toString();
 
         Mockito
-            .when(webClient.post(ConsoleCommandParser.DEFAULT_HOST + "/api/creator/note", requestBody))
+            .when(webClient.post(ConsoleCommandParser.DEFAULT_HOST + CreateNoteCommand.PATH_CREATOR_NOTE, requestBody))
             .thenReturn(responseBody);
 
         new CreateNoteCommand(output, webClient, ConsoleCommandParser.DEFAULT_HOST, 3, "Some Note").execute();
 
         Mockito
             .verify(webClient, Mockito.times(1))
-            .post(ConsoleCommandParser.DEFAULT_HOST + "/api/creator/note", requestBody);
+            .post(ConsoleCommandParser.DEFAULT_HOST + CreateNoteCommand.PATH_CREATOR_NOTE, requestBody);
 
         Mockito
             .verify(output, Mockito.times(1))

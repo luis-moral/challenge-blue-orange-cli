@@ -4,6 +4,10 @@ import com.eclipsesource.json.Json;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import es.molabs.bocli.client.WebClient;
+import es.molabs.bocli.command.CreateNoteCommand;
+import es.molabs.bocli.command.DeleteNoteCommand;
+import es.molabs.bocli.command.EditNoteCommand;
+import es.molabs.bocli.command.ListCreatorsCommand;
 import es.molabs.bocli.ouput.Output;
 import es.molabs.bocli.parser.CommandParser;
 import es.molabs.bocli.parser.ConsoleCommandParser;
@@ -63,7 +67,7 @@ public class CliFeature {
         apiMock
             .stubFor(
                 WireMock
-                    .get(WireMock.urlPathEqualTo("/api/creators"))
+                    .get(WireMock.urlPathEqualTo(ListCreatorsCommand.PATH_CREATORS))
                     .withQueryParam("comics", WireMock.equalTo("3"))
                     .withQueryParam("sort", WireMock.equalTo("fullName"))
                     .willReturn(
@@ -86,10 +90,11 @@ public class CliFeature {
 
     @Test public void
     user_can_create_edit_and_delete_creator_notes() {
+        int id = 1;
         String createNoteResponse =
             Json
                 .object()
-                .add("id", 1)
+                .add("id", id)
                 .add("creatorId", 5)
                 .add("note", "Some text")
                 .toString();
@@ -103,38 +108,38 @@ public class CliFeature {
         apiMock
             .stubFor(
                 WireMock
-                    .post(WireMock.urlPathEqualTo("/api/creator/note"))
+                    .post(WireMock.urlPathEqualTo(CreateNoteCommand.PATH_CREATOR_NOTE))
                     .willReturn(
                         WireMock
                             .aResponse()
-                            .withStatus(200)
-                            .withHeader("Content-Type", "application/json")
-                            .withBody(createNoteResponse)
+                                .withStatus(201)
+                                .withHeader("Content-Type", "application/json")
+                                .withBody(createNoteResponse)
                     )
             );
 
         apiMock
             .stubFor(
                 WireMock
-                    .put(WireMock.urlPathEqualTo("/api/creator/note/1"))
+                    .put(WireMock.urlPathEqualTo(EditNoteCommand.PATH_CREATOR_NOTE + "/" + id))
                     .willReturn(
                         WireMock
                             .aResponse()
-                            .withStatus(200)
-                            .withHeader("Content-Type", "application/json")
-                            .withBody(editNoteResponse)
+                                .withStatus(200)
+                                .withHeader("Content-Type", "application/json")
+                                .withBody(editNoteResponse)
                     )
             );
 
         apiMock
             .stubFor(
                 WireMock
-                    .delete(WireMock.urlPathEqualTo("/api/creator/note/1"))
+                    .delete(WireMock.urlPathEqualTo(DeleteNoteCommand.PATH_CREATOR_NOTE + "/" + id))
                     .willReturn(
                         WireMock
                             .aResponse()
-                            .withStatus(200)
-                            .withHeader("Content-Type", "application/json")
+                                .withStatus(200)
+                                .withHeader("Content-Type", "application/json")
                     )
             );
 

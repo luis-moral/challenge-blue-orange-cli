@@ -25,6 +25,6 @@ public class DeleteNoteCommandShould {
 
         Mockito
             .verify(webClient, Mockito.times(1))
-            .delete(ConsoleCommandParser.DEFAULT_HOST + "/api/creator/note", "1");
+            .delete(ConsoleCommandParser.DEFAULT_HOST + DeleteNoteCommand.PATH_CREATOR_NOTE, "1");
     }
 }
