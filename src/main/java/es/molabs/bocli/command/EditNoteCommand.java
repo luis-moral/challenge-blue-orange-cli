@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class EditNoteCommand extends WebClientCommand {
 
-    public static final String PATH_CREATOR_NOTE = "/api/v1/public/creators/notes";
+    public static final String PATH_CREATOR_NOTE = "/api/v1/public/creators-notes";
 
     private final int id;
     private final String note;

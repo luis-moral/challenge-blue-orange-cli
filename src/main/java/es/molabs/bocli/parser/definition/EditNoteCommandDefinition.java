@@ -11,16 +11,16 @@ import org.apache.commons.cli.ParseException;
 public class EditNoteCommandDefinition extends ConsoleCommandDefinition<EditNoteCommand> {
 
     private static final String ARGUMENT_CREATOR_ID = "id";
-    private static final String ARGUMENT_NOTE = "note";
+    private static final String ARGUMENT_TEXT = "text";
 
     public EditNoteCommandDefinition() {
         super(
             "edit_note",
             false,
-            "-" + ARGUMENT_CREATOR_ID + " id -" + ARGUMENT_NOTE + " text",
+            "-" + ARGUMENT_CREATOR_ID + " id -" + ARGUMENT_TEXT + " text",
             "Edits a creator's custom note",
             Option.builder(ARGUMENT_CREATOR_ID).required().hasArg().desc("Note id").build(),
-            Option.builder(ARGUMENT_NOTE).required().hasArg().desc("Text of the note").build()
+            Option.builder(ARGUMENT_TEXT).required().hasArg().desc("Text of the note").build()
         );
     }
 
@@ -34,7 +34,7 @@ public class EditNoteCommandDefinition extends ConsoleCommandDefinition<EditNote
                 webClient,
                 host,
                 Integer.parseInt(line.getOptionValue(ARGUMENT_CREATOR_ID)),
-                line.getOptionValue(ARGUMENT_NOTE)
+                line.getOptionValue(ARGUMENT_TEXT)
             );
     }
 }
