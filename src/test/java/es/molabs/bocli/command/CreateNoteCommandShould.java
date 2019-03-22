@@ -26,7 +26,7 @@ public class CreateNoteCommandShould {
             Json
                 .object()
                 .add("creatorId", 3)
-                .add("note", "Some Note")
+                .add("text", "Some Note")
                 .toString();
 
         String responseBody =
@@ -34,7 +34,7 @@ public class CreateNoteCommandShould {
                 .object()
                 .add("id", 1)
                 .add("creatorId", 3)
-                .add("note", "Some Note")
+                .add("text", "Some Note")
                 .toString();
 
         Mockito

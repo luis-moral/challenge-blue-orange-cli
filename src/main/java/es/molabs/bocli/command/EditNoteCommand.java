@@ -11,13 +11,13 @@ public class EditNoteCommand extends WebClientCommand {
     public static final String PATH_CREATOR_NOTE = "/api/v1/public/creators-notes";
 
     private final int id;
-    private final String note;
+    private final String text;
 
-    public EditNoteCommand(Output output, WebClient webClient, String host, int id, String note) {
+    public EditNoteCommand(Output output, WebClient webClient, String host, int id, String text) {
         super(output, webClient, host);
 
         this.id = id;
-        this.note = note;
+        this.text = text;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class EditNoteCommand extends WebClientCommand {
                             Integer.toString(id),
                             Json
                                 .object()
-                                .add("note", note)
+                                .add("text", text)
                                 .toString()
                         )
                 )
@@ -45,11 +45,11 @@ public class EditNoteCommand extends WebClientCommand {
         if (!super.equals(o)) return false;
         EditNoteCommand that = (EditNoteCommand) o;
         return id == that.id &&
-            Objects.equals(note, that.note);
+            Objects.equals(text, that.text);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, note);
+        return Objects.hash(super.hashCode(), id, text);
     }
 }

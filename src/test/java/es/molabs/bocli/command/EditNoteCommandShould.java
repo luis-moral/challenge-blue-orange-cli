@@ -25,7 +25,7 @@ public class EditNoteCommandShould {
         String requestBody =
             Json
                 .object()
-                .add("note", "Some Note")
+                .add("text", "Some Note")
                 .toString();
 
         String responseBody =
@@ -33,7 +33,7 @@ public class EditNoteCommandShould {
                 .object()
                 .add("id", 1)
                 .add("creatorId", 3)
-                .add("note", "Some Note")
+                .add("text", "Some Note")
                 .toString();
 
         Mockito
