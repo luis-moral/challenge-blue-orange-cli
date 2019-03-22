@@ -15,7 +15,7 @@ public class WebClient {
 
         String body = readResponseBody(connection);
 
-        validateResponseCode(connection);
+        validateResponse(connection.getResponseCode(), body);
         connection.disconnect();
 
         return body;
@@ -27,7 +27,7 @@ public class WebClient {
         sendRequestBody(connection, "POST", requestBody);
         String body = readResponseBody(connection);
 
-        validateResponseCode(connection);
+        validateResponse(connection.getResponseCode(), body);
         connection.disconnect();
 
         return body;
@@ -39,7 +39,7 @@ public class WebClient {
         sendRequestBody(connection, "PUT", requestBody);
         String body = readResponseBody(connection);
 
-        validateResponseCode(connection);
+        validateResponse(connection.getResponseCode(), body);
         connection.disconnect();
 
         return body;
@@ -51,7 +51,7 @@ public class WebClient {
         sendRequestBody(connection, "DELETE", null);
         String body = readResponseBody(connection);
 
-        validateResponseCode(connection);
+        validateResponse(connection.getResponseCode(), body);
         connection.disconnect();
 
         return body;
@@ -92,20 +92,16 @@ public class WebClient {
             writer.flush();
             writer.close();
         }
-
-        connection.getResponseCode();
     }
 
-    private void validateResponseCode(HttpURLConnection connection) throws IOException {
-        int responseCode = connection.getResponseCode();
-
+    private void validateResponse(int responseCode, String body) throws IOException {
         if (responseCode >= 300) {
-            throw new InvalidResponseCodeException(responseCode);
+            throw new InvalidResponseException(responseCode, body);
         }
     }
 
     private String readResponseBody(HttpURLConnection urlConnection) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(getInputStream(urlConnection)));
         StringBuilder body = new StringBuilder();
         String inputLine;
 
@@ -120,5 +116,18 @@ public class WebClient {
         reader.close();
 
         return body.toString();
+    }
+
+    private InputStream getInputStream(HttpURLConnection urlConnection) {
+        InputStream inputStream;
+
+        try {
+            inputStream = urlConnection.getInputStream();
+        }
+        catch (IOException e) {
+            inputStream = urlConnection.getErrorStream();
+        }
+
+        return inputStream;
     }
 }

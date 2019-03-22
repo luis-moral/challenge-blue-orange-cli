@@ -73,7 +73,7 @@ public class ConsoleCommandParserShould {
 
     @Test public void
     parse_create_note_commands() {
-        String[] args = {"-add_note", "-creatorId", "5", "-note", "Some text"};
+        String[] args = {"-add_note", "-creatorId", "5", "-text", "Some text"};
 
         Command createNoteCommand = commandParser.parse(args);
 
@@ -84,7 +84,7 @@ public class ConsoleCommandParserShould {
     
     @Test public void
     parse_edit_note_commands() {
-        String[] args = {"-edit_note", "-id", "10", "-note", "Some text"};
+        String[] args = {"-edit_note", "-id", "10", "-text", "Some text"};
 
         Command createNoteCommand = commandParser.parse(args);
 

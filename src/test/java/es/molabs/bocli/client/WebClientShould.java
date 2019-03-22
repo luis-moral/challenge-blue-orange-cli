@@ -14,16 +14,23 @@ import org.junit.runners.JUnit4;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @RunWith(JUnit4.class)
 public class WebClientShould {
+
+    private static final int API_PORT;
+
+    static {
+        API_PORT = 20000 + new Random().nextInt(25000);
+    }
 
     private WireMockServer apiMock;
     private WebClient webClient;
 
     @Before
     public void setUp() {
-        apiMock = new WireMockServer(8080);
+        apiMock = new WireMockServer(API_PORT);
         apiMock.start();
 
         webClient = new WebClient();
@@ -59,7 +66,7 @@ public class WebClientShould {
         queryString.put("id", "3");
         queryString.put("fullName", "Some Creator");
 
-        String responseBody = webClient.get("http://localhost:8080/api/creators", queryString);
+        String responseBody = webClient.get("http://localhost:" + API_PORT + "/api/creators", queryString);
 
         Assertions
             .assertThat(responseBody)
@@ -97,7 +104,7 @@ public class WebClientShould {
                     )
             );
 
-        String responseBody = webClient.post("http://localhost:8080/api/creator/note", requestBody);
+        String responseBody = webClient.post("http://localhost:" + API_PORT + "/api/creator/note", requestBody);
 
         Assertions
             .assertThat(responseBody)
@@ -144,7 +151,7 @@ public class WebClientShould {
                     )
             );
 
-        String responseBody = webClient.put("http://localhost:8080/api/creator/note", noteId, requestBody);
+        String responseBody = webClient.put("http://localhost:" + API_PORT + "/api/creator/note", noteId, requestBody);
 
         Assertions
             .assertThat(responseBody)
@@ -176,7 +183,7 @@ public class WebClientShould {
                     )
             );
 
-        String responseBody = webClient.delete("http://localhost:8080/api/creator/note", noteId);
+        String responseBody = webClient.delete("http://localhost:" + API_PORT + "/api/creator/note", noteId);
 
         Assertions
             .assertThat(responseBody)
@@ -190,7 +197,7 @@ public class WebClientShould {
             );
     }
 
-    @Test(expected = InvalidResponseCodeException.class) public void
+    @Test(expected = InvalidResponseException.class) public void
     throw_exception_is_response_code_is_not_valid() throws IOException {
         String noteId = "1";
 
@@ -201,11 +208,11 @@ public class WebClientShould {
                     .willReturn(
                         WireMock
                             .aResponse()
-                            .withStatus(300)
+                            .withStatus(400)
                             .withHeader("Content-Type", "application/json")
                     )
             );
 
-        webClient.delete("http://localhost:8080/api/creator/note", noteId);
+        webClient.delete("http://localhost:" + API_PORT + "/api/creator/note", noteId);
     }
 }

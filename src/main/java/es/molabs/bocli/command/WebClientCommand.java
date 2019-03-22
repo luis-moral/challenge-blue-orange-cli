@@ -1,5 +1,6 @@
 package es.molabs.bocli.command;
 
+import es.molabs.bocli.client.InvalidResponseException;
 import es.molabs.bocli.client.WebClient;
 import es.molabs.bocli.ouput.Output;
 
@@ -49,6 +50,9 @@ public abstract class WebClientCommand implements Command {
 
         if (exception instanceof FileNotFoundException) {
             message = "Error connecting: " + exception.getMessage();
+        }
+        if (exception instanceof InvalidResponseException) {
+            message = exception.getMessage();
         }
         else {
             message = exception.getClass().getSimpleName() + ": " + exception.getMessage();

@@ -22,9 +22,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CliFeature {
+
+    private static final int API_PORT;
+
+    static {
+        API_PORT = 20000 + new Random().nextInt(25000);
+    }
 
     private TestOutput output;
 
@@ -33,7 +40,7 @@ public class CliFeature {
 
     @Before
     public void setUp() {
-        apiMock = new WireMockServer(8080);
+        apiMock = new WireMockServer(API_PORT);
         apiMock.start();
 
         output = new TestOutput();
@@ -79,7 +86,7 @@ public class CliFeature {
                     )
             );
 
-        String[] args = {"-list", "-filter", "comics=3", "-sort", "fullName"};
+        String[] args = {"-server", "http://localhost:" + API_PORT, "-list", "-filter", "comics=3", "-sort", "fullName"};
 
         commandParser.parse(args).execute();
 
@@ -144,9 +151,9 @@ public class CliFeature {
             );
 
 
-        String[] createNoteArgs = {"-add_note", "-creatorId", "5", "-note", "Some text"};
-        String[] editNoteArgs = {"-edit_note", "-id", "1", "-note", "Other text"};
-        String[] deleteNoteArgs = {"-delete_note", "-id", "1"};
+        String[] createNoteArgs = {"-server", "http://localhost:" + API_PORT, "-add_note", "-creatorId", "5", "-text", "Some text"};
+        String[] editNoteArgs = {"-server", "http://localhost:" + API_PORT, "-edit_note", "-id", "1", "-text", "Other text"};
+        String[] deleteNoteArgs = {"-server", "http://localhost:" + API_PORT, "-delete_note", "-id", "1"};
 
         commandParser.parse(createNoteArgs).execute();
         commandParser.parse(editNoteArgs).execute();
