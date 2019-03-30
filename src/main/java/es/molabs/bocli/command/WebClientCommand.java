@@ -33,10 +33,10 @@ public abstract class WebClientCommand implements Command {
     }
 
     protected String call(WebClientCall call) {
-        String message = null;
+        String message;
 
         try {
-            message = call.process();
+            message = call.process(getWebClient());
         }
         catch (IOException IOe) {
             message = formatException(IOe);
@@ -51,7 +51,7 @@ public abstract class WebClientCommand implements Command {
         if (exception instanceof FileNotFoundException) {
             message = "Error connecting: " + exception.getMessage();
         }
-        if (exception instanceof InvalidResponseException) {
+        else if (exception instanceof InvalidResponseException) {
             message = exception.getMessage();
         }
         else {
@@ -78,6 +78,7 @@ public abstract class WebClientCommand implements Command {
 
     @FunctionalInterface
     public interface WebClientCall {
-        String process() throws IOException;
+
+        String process(WebClient webClient) throws IOException;
     }
 }

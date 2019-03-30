@@ -24,7 +24,7 @@ public class CreateNoteCommand extends WebClientCommand {
     public void execute() {
         getOutput()
             .printLine(
-                call(() -> getWebClient()
+                call(client -> client
                     .post(
                         getHost() + PATH_CREATOR_NOTE,
                         Json

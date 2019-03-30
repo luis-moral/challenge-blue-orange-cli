@@ -29,7 +29,7 @@ public class ListCreatorsCommand extends WebClientCommand {
     public void execute() {
         getOutput()
             .printLine(
-                call(() -> getWebClient().get(getHost() + PATH_CREATORS, buildQueryString()))
+                call(client -> client.get(getHost() + PATH_CREATORS, buildQueryString()))
             );
     }
 

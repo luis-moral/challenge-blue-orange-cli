@@ -24,16 +24,15 @@ public class EditNoteCommand extends WebClientCommand {
     public void execute() {
         getOutput()
             .printLine(
-                call(() ->
-                    getWebClient()
-                        .put(
-                            getHost() + PATH_CREATOR_NOTE ,
-                            Integer.toString(id),
-                            Json
-                                .object()
-                                .add("text", text)
-                                .toString()
-                        )
+                call(client -> client
+                    .put(
+                        getHost() + PATH_CREATOR_NOTE ,
+                        Integer.toString(id),
+                        Json
+                            .object()
+                            .add("text", text)
+                            .toString()
+                    )
                 )
             );
     }

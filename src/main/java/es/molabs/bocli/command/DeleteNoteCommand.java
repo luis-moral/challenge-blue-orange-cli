@@ -21,12 +21,11 @@ public class DeleteNoteCommand extends WebClientCommand {
     public void execute() {
         getOutput()
             .printLine(
-                call(() ->
-                    getWebClient()
-                        .delete(
-                            getHost() + PATH_CREATOR_NOTE,
-                            Integer.toString(id)
-                        )
+                call(client -> client
+                    .delete(
+                        getHost() + PATH_CREATOR_NOTE,
+                        Integer.toString(id)
+                    )
                 )
             );
     }
